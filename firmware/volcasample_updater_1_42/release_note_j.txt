@@ -1,0 +1,6 @@
+
+volca sample ver 1.42
+
+ - MIDI Song Position Pointer動作を修正
+
+

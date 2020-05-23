@@ -1,0 +1,59 @@
+html, body {
+  background-color: #FFFFFF;
+  color: #222222;
+  font-family: sans-serif;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.pageheader h1 {
+  font-family: 'Anton', sans-serif;
+  color: #777;
+  display: inline-block;
+  font-size: 400%;
+  margin-right: 20px;
+}
+
+.pageheader h2 {
+  display: inline-block;
+}
+
+.pageheader h2 .title {
+  color: #EC3134;
+  font-weight: bold;
+}
+
+.pageheader h2 .subtitle {
+  color: #EC3134;
+  font-size: 50%;
+}
+
+/** SPINNER CREATION **/
+
+.loader {
+  position: relative;
+  text-align: center;
+  margin: 15px auto 35px auto;
+  z-index: 9999;
+  display: block;
+  width: 80px;
+  height: 80px;
+  border: 10px solid rgba(0, 0, 0, .3);
+  border-radius: 50%;
+  border-top-color: #000;
+  animation: spin 1s ease-in-out infinite;
+  -webkit-animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}

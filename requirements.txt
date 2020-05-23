@@ -1,0 +1,7 @@
+volcasample[audio]
+
+Flask
+Flask-SQLAlchemy
+Flask-WTF
+sqlalchemy-migrate
+python-dotenv
