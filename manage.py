@@ -6,7 +6,7 @@ load_dotenv()
 
 import os
 from migrate.versioning.shell import main
-from identity.config import BaseConfig
+from vsm.config import BaseConfig
 
 if __name__ == "__main__":
     main(repository="migrations", url=BaseConfig.SQLALCHEMY_DATABASE_URI, debug="True")

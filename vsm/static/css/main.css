@@ -16,16 +16,15 @@ html, body {
 }
 
 .pageheader h2 {
+  color: #EC3134;
   display: inline-block;
 }
 
 .pageheader h2 .title {
-  color: #EC3134;
   font-weight: bold;
 }
 
 .pageheader h2 .subtitle {
-  color: #EC3134;
   font-size: 50%;
 }
 
