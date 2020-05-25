@@ -2,7 +2,8 @@
 
 {% block base_content %}
 
-<div id="main-wrapper">
+<div id="wrapper-outer">
+  <div id="wrapper-inner">
 
     <header class="pageheader">
       <div class="container">
@@ -15,12 +16,20 @@
     </header>
 
     <div class="container">
-      <nav class="navbar navbar-expand-lg">
-          <ul class="navbar-nav mr-auto">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+
             <li class="nav-item">
-              <a class="navbar-brand fas fa-home" href="{{ url_for('ui.index') }}"></a>
+              <a class="nav-link" href="{{ url_for('ui.bank_index') }}">Banks</a>
             </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('ui.sample_index') }}">Samples</a>
+            </li>
+
           </ul>
+        </div>
       </nav>
     </div>
 
@@ -61,11 +70,12 @@
       {% block content %}{% endblock %}
     </div>
 
-    <footer>
-      <div class="container">
-          Copyright &copy; {{ current_year }} Richard Bramley
-      </div>
-    </footer>
+  </div>
+</div>
 
+<div class="container">
+  <footer>
+      Copyright &copy; {{ current_year }} Richard Bramley
+  </footer>
 </div>
 {% endblock %}
