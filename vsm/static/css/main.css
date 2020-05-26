@@ -1,6 +1,6 @@
 html, body {
   background-color: #FFFFFF;
-  color: #222222;
+  color: #838584;
   font-family: sans-serif;
   height: 100%;
   margin: 0;
@@ -17,11 +17,15 @@ html, body {
 }
 
 footer {
-  background-color: #838584;
+  background-color: #F8F9FA;
   position: relative;
   height: 100px;
   margin-top: -100px;
   clear: both;
+}
+
+footer p {
+  padding: 20px;
 }
 
 .pageheader h1 {
