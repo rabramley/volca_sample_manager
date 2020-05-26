@@ -49,6 +49,12 @@ footer p {
   font-size: 50%;
 }
 
+/** Restyle Docker **/
+
+.bg-korg-grey {
+  background-color: #838584;
+}
+
 /** SPINNER CREATION **/
 
 .loader {
