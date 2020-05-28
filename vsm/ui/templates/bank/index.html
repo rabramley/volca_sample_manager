@@ -1,17 +1,52 @@
 {% extends "_base.html" %}
+{% import "_formHelpers.html" as formhelper %}
+
+{% set bank_class = 'active' %}
 
 {% block submenu %}
     <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('ui.sample_index') }}">Upload</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('ui.sample_index') }}">Create</a>
+        <a class="nav-link" data-toggle="modal" data-target="#uploadModal" href="javascript://">Upload</a>
     </li>
 {% endblock %}
 
 {% block content %}
 <section>
-
+    <ul class="list-group">
+        {% for b in banks.items %}
+            <li class="list-group-item">
+                <header>
+                    <h1>{{ b.name }}</span></h1>
+                    <h2>Created {{ b.created_datetime | date_format }}</h2>
+                </header>
+            </li>
+        {% endfor %}
+    </ul>
 </section>
-    
+
+<!-- Upload Dialog -->
+<div class="modal fade" id="uploadModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="uploadModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload Bank</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('ui.bank_index') }}" method="POST" enctype="multipart/form-data">
+                    {{ formhelper.render_form(upload_form, submit_label="Upload") }}
+
+                    <div class="modal-footer">
+                        {{ formhelper.render_button_bar(submit_label='Upload') }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 {% endblock %}
+

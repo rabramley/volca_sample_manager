@@ -52,3 +52,13 @@ class SearchForm(FlashingForm):
 
 class ConfirmForm(FlashingForm):
     id = HiddenField("id", validators=[DataRequired()])
+
+
+class BankUploadForm(FlashingForm):
+    name = StringField("Name", validators=[Length(max=50)])
+    upload = FileField(
+        'Bank Wave File',
+        accept=['audio/wav'],
+        validators=[FileRequired()]
+    )
+

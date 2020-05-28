@@ -40,6 +40,14 @@
       </div>
 {% endmacro %}
 
+{% macro render_form(form, submit_label) %}
+  {{ form.hidden_tag() }}
+
+  {% for field in form %}
+    {{ render_field(field) }}
+  {% endfor %}
+{% endmacro %}
+
 
 {% macro render_form_errors(form) %}
     {% for field in form %}
