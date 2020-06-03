@@ -7,6 +7,9 @@
     <li class="nav-item">
         <a class="nav-link" data-toggle="modal" data-target="#uploadModal" href="javascript://">Upload</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('ui.bank_stop') }}">Stop</a>
+    </li>
 {% endblock %}
 
 {% block content %}
@@ -18,6 +21,8 @@
                     <h1>{{ b.name }}</span></h1>
                     <h2>Created {{ b.created_datetime | date_format }}</h2>
                 </header>
+
+                <a class="btn btn-secondary" href="{{ url_for('ui.bank_load', id=b.id) }}">Load Bank</a>
             </li>
         {% endfor %}
     </ul>
@@ -34,11 +39,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{ url_for('ui.bank_index') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ url_for('ui.bank_upload') }}" method="POST" enctype="multipart/form-data">
                     {{ formhelper.render_form(upload_form, submit_label="Upload") }}
 
                     <div class="modal-footer">
-                        {{ formhelper.render_button_bar(submit_label='Upload') }}
+                        {{ formhelper.render_button_bar(submit_label='Upload', modal_cancel=True) }}
                     </div>
                 </form>
             </div>

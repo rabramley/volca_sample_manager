@@ -5,3 +5,8 @@ Flask-SQLAlchemy
 Flask-WTF
 sqlalchemy-migrate
 python-dotenv
+simpleaudio
+celery
+urllib3
+redis
+future

@@ -1,6 +1,7 @@
 import os
 import logging
 from flask import Flask
+from .celery import init_celery
 from .ui import blueprint as ui_blueprint
 from .database import db
 from .template_filters import init_template_filters
@@ -20,6 +21,7 @@ def create_app(config=BaseConfig):
         db.init_app(app)
         init_template_filters(app)
         init_standard_views(app)
+        init_celery(app)
 
     app.register_blueprint(ui_blueprint)
 

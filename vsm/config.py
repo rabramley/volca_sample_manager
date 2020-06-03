@@ -19,6 +19,9 @@ class BaseConfig(object):
 
     FILE_UPLOAD_DIRECTORY = os.environ["FILE_UPLOAD_DIRECTORY"]
 
+    CELERY_BROKER_URL = os.environ["CELERY_BROKER_URL"]
+    CELERY_RESULT_BACKEND = os.environ["CELERY_RESULT_BACKEND"]
+
 
 class TestConfig(BaseConfig):
     """Configuration for general testing"""
