@@ -1,6 +1,11 @@
 import os
 import simpleaudio as sa
-from flask import render_template, redirect, url_for, flash, current_app
+import wave
+import math
+from datetime import datetime
+from simpleaudio.shiny import PlayObject
+from time import sleep
+from flask import render_template, redirect, url_for, flash, current_app, request
 from vsm.model import Bank
 from vsm.celery import celery
 from .. import blueprint, db
@@ -40,16 +45,20 @@ def bank_upload():
     return redirect(url_for('ui.bank_index'))
 
 
-@blueprint.route("/banks/<int:id>/load")
-def bank_load(id):
+@blueprint.route("/banks/load")
+def bank_load():
 
     sa.stop_all()
 
-    bank = Bank.query.get_or_404(id)
+    bank_id = request.args.get('bank_id', 0, type=int)
 
-    load_bank.delay(id)
+    # bank = Bank.query.get_or_404(id)
+    
+    # load_bank.delay(id)
 
-    return redirect(url_for('ui.bank_index'))
+    # return redirect(url_for('ui.bank_index'))
+
+    return {'bank_id': bank_id}
 
 
 @blueprint.route("/banks/stop")
@@ -64,13 +73,37 @@ def bank_stop():
 def load_bank(id):
     current_app.logger.info(f'load_bank: id={id}')
 
-    bank = Bank.query.get(id)
+    try:
 
-    current_app.logger.info(f'load_bank: playing {bank.filepath}')
+        bank = Bank.query.get(id)
 
-    wave_obj = sa.WaveObject.from_wave_file(bank.filepath)
-    play_obj = wave_obj.play()
-    play_obj.wait_done()
+        current_app.logger.info(f'load_bank: playing {bank.filepath}')
 
-    current_app.logger.info(f'load_bank: finished {bank.filepath}')
+        duration = wave_file_duration(bank.filepath)
 
+        wave_obj = sa.WaveObject.from_wave_file(bank.filepath)
+        start_time = datetime.utcnow()
+        play_obj = wave_obj.play()
+
+        play_id = int(play_obj.play_id)
+        current_app.logger.info(f'load_bank: play ID {play_id}')
+
+        while play_obj.is_playing():
+            sleep(5)
+            time_elapsed = int((datetime.utcnow() - start_time).total_seconds())
+            percentage_complete = int(time_elapsed * 100 / duration)
+            current_app.logger.info(f'load_bank: Loading {bank.filepath} for {time_elapsed} of {duration} seconds ({percentage_complete}%)')
+
+    except Exception as e:
+            current_app.logger.info(f'load_bank: Exception {e}')
+
+    finally:
+        current_app.logger.info(f'load_bank: finished {bank.filepath}')
+
+
+def wave_file_duration(filename):
+    f = wave.open(filename, 'rb')
+
+    frames = f.getnframes()
+    rate = f.getframerate()
+    return int(math.ceil(frames / float(rate)))
