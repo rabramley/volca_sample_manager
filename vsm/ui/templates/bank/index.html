@@ -65,7 +65,7 @@
                     <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
 
-                <p class="debug-test"></p>
+                <p id="update-message"></p>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">Close</button>
@@ -80,9 +80,23 @@
 
 {% block js %}
 <script>
-    function load_progress(modal, bank_id){
-        modal.find('.debug-test').text(bank_id);
-        // setTimeout(function(){ load_progress(data.bank_id) }, 5000);
+    function load_progress(modal){
+        $.getJSON("{{ url_for('ui.bank_load_status') }}", {}, function(data) {
+            if (data.status == 'playing'){
+                pbar = modal.find('.progress-bar')
+                pbar.attr('aria-valuemax', data.duration)
+                pbar.attr('aria-valuenow', data.elapsed)
+                perc = Number(data.percentage) + "%";
+                pbar.text(perc)
+                pbar.css("width", perc);
+
+                modal.find('#update-message').text(Number(data.elapsed) + 's of ' + Number(data.duration) + 's uploaded.')
+
+                setTimeout(function(){ load_progress(modal); }, 1000);
+            } else {
+                modal.modal('hide');
+            }
+        });
     }
     
     $('#loadModal').on('show.bs.modal', function (event) {
@@ -93,10 +107,19 @@
         var modal = $(this);
         modal.find('.modal-title').text('Loading Bank ' + bank_name);
 
+        pbar = modal.find('.progress-bar')
+        pbar.attr('aria-valuemax', 100)
+        pbar.attr('aria-valuenow', 0)
+        perc = "0%";
+        pbar.text(perc)
+        pbar.css("width", perc);
+
+        modal.find('#update-message').text('Starting load...')
+
         $.getJSON("{{ url_for('ui.bank_load') }}", {
             bank_id: bank_id,
         }, function(data) {
-            setTimeout(function(){ load_progress(modal, data.bank_id); }, 5000);
+            setTimeout(function(){ load_progress(modal); }, 1000);
         });
 
     });

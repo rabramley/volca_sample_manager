@@ -5,7 +5,7 @@ import math
 from datetime import datetime
 from simpleaudio.shiny import PlayObject
 from time import sleep
-from flask import render_template, redirect, url_for, flash, current_app, request
+from flask import render_template, redirect, url_for, flash, current_app, request, session
 from vsm.model import Bank
 from vsm.celery import celery
 from .. import blueprint, db
@@ -45,20 +45,41 @@ def bank_upload():
     return redirect(url_for('ui.bank_index'))
 
 
-@blueprint.route("/banks/load")
+@blueprint.route("/banks/load", methods=['GET','POST'])
 def bank_load():
 
-    sa.stop_all()
-
     bank_id = request.args.get('bank_id', 0, type=int)
+    bank = Bank.query.get_or_404(bank_id)    
+    session['duration'] = wave_file_duration(bank.filepath)
+    session['start_time'] = datetime.utcnow()
 
-    # bank = Bank.query.get_or_404(id)
-    
-    # load_bank.delay(id)
+    os.system("amixer sset 'Headphone' 90%")
 
-    # return redirect(url_for('ui.bank_index'))
+    wave = sa.WaveObject.from_wave_file(bank.filepath)
+    player = wave.play()
+    session['play_id'] = int(player.play_id)
 
     return {'bank_id': bank_id}
+
+
+@blueprint.route("/banks/load_status")
+def bank_load_status():
+
+    player = PlayObject(int(session['play_id']))
+    if player.is_playing():
+        status = 'playing'
+    else:
+        status = 'not playing'
+
+    time_elapsed = int((datetime.utcnow() - session['start_time']).total_seconds())
+    percentage = int(time_elapsed * 100 / session['duration'])
+
+    return {
+        'duration': session['duration'],
+        'elapsed': time_elapsed,
+        'percentage': percentage,
+        'status': status,
+    }
 
 
 @blueprint.route("/banks/stop")
