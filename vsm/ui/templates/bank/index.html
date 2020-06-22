@@ -39,7 +39,7 @@
             </div>
             <div class="modal-body">
                 <form action="{{ url_for('ui.bank_upload') }}" method="POST" enctype="multipart/form-data">
-                    {{ formhelper.render_form(upload_form, submit_label="Upload") }}
+                    {{ formhelper.render_form(upload_form) }}
 
                     <div class="modal-footer">
                         {{ formhelper.render_button_bar(submit_label='Upload', modal_cancel=True) }}

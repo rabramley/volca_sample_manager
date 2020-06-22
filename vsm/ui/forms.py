@@ -7,6 +7,7 @@ from wtforms import (
     HiddenField,
     SelectField,
     BooleanField,
+    MultipleFileField,
 )
 from wtforms.validators import Length, DataRequired
 from flask_wtf.file import FileField as _FileField, FileAllowed, FileRequired
@@ -62,3 +63,9 @@ class BankUploadForm(FlashingForm):
         validators=[FileRequired()]
     )
 
+class SampleUploadForm(FlashingForm):
+    samples = MultipleFileField('Sample Wave Files')
+
+class SampleLoadForm(FlashingForm):
+    id = HiddenField("id", validators=[DataRequired()])
+    destination = SelectField('Destination', coerce=int, choices=[(c, c) for c in range(100)])

@@ -7,9 +7,9 @@ from simpleaudio.shiny import PlayObject
 from time import sleep
 from flask import render_template, redirect, url_for, flash, current_app, request, session
 from vsm.model import Bank
-from vsm.celery import celery
 from .. import blueprint, db
 from ..forms import BankUploadForm
+
 
 @blueprint.route("/banks",)
 def bank_index():
@@ -88,38 +88,6 @@ def bank_stop():
     sa.stop_all()
 
     return redirect(url_for('ui.bank_index'))
-
-
-@celery.task()
-def load_bank(id):
-    current_app.logger.info(f'load_bank: id={id}')
-
-    try:
-
-        bank = Bank.query.get(id)
-
-        current_app.logger.info(f'load_bank: playing {bank.filepath}')
-
-        duration = wave_file_duration(bank.filepath)
-
-        wave_obj = sa.WaveObject.from_wave_file(bank.filepath)
-        start_time = datetime.utcnow()
-        play_obj = wave_obj.play()
-
-        play_id = int(play_obj.play_id)
-        current_app.logger.info(f'load_bank: play ID {play_id}')
-
-        while play_obj.is_playing():
-            sleep(5)
-            time_elapsed = int((datetime.utcnow() - start_time).total_seconds())
-            percentage_complete = int(time_elapsed * 100 / duration)
-            current_app.logger.info(f'load_bank: Loading {bank.filepath} for {time_elapsed} of {duration} seconds ({percentage_complete}%)')
-
-    except Exception as e:
-            current_app.logger.info(f'load_bank: Exception {e}')
-
-    finally:
-        current_app.logger.info(f'load_bank: finished {bank.filepath}')
 
 
 def wave_file_duration(filename):

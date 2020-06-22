@@ -1,16 +1,99 @@
 {% extends "_base.html" %}
+{% import "_formHelpers.html" as formhelper %}
 
-{% set sample_class = 'active' %}
+{% set bank_class = 'active' %}
 
 {% block submenu %}
     <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('ui.sample_index') }}">Upload</a>
+        <a class="nav-link" data-toggle="modal" data-target="#uploadModal" href="javascript://">Upload</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('ui.bank_stop') }}">Stop</a>
     </li>
 {% endblock %}
 
 {% block content %}
 <section>
-
+    <ul class="list-group">
+        {% for s in samples.items %}
+            <li class="list-group-item">
+                <header>
+                    <h1>{{ s.filename }}</span></h1>
+                    <h2>Created {{ s.created_datetime | date_format }}</h2>
+                </header>
+                <audio id="sample_{{s.id}}" src="{{ url_for('ui.sample_file', id=s.id) }}" preload="auto"></audio>
+                <a href="javascript:play_single_sound('sample_{{s.id}}');">Play 5-sec sound on single channel</a>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadModal" data-sample-id="{{ s.id }}" data-sample-filename="{{ s.filename }}">Load Sample</button>
+            </li>
+        {% endfor %}
+    </ul>
 </section>
-    
+
+<!-- Upload Dialog -->
+<div class="modal fade" id="uploadModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="uploadModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload Sample</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('ui.sample_upload') }}" method="POST" enctype="multipart/form-data">
+                    {{ formhelper.render_form(upload_form) }}
+
+                    <div class="modal-footer">
+                        {{ formhelper.render_button_bar(submit_label='Upload', modal_cancel=True) }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Load Dialog -->
+<div class="modal fade" id="loadModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="loadModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Load Sample</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('ui.sample_load') }}" method="POST" enctype="multipart/form-data">
+                    {{ formhelper.render_form(load_form) }}
+
+                    <div class="modal-footer">
+                        {{ formhelper.render_button_bar(submit_label='Load', modal_cancel=True) }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
+
+{% block js %}
+<script>
+    function play_single_sound(id) {
+        document.getElementById(id).play();
+    }
+
+    $('#loadModal').on('show.bs.modal', function (event) {
+        var triggering_button = $(event.relatedTarget);
+        var sample_id = triggering_button.data('sample-id');
+        var sample_filename = triggering_button.data('sample-filename');
+
+        var modal = $(this);
+        modal.find('.modal-title').text('Loading Sample ' + sample_filename);
+        modal.find('#id').val(sample_id);
+    });
+
+</script>
+{% endblock %}
+
+
